@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="Content/style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .tableHide {
+            display: none;
+        }
+
+        .tableVisible {
+            width: 100%;
+            display: table;
+            border-collapse: collapse;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .wrapper {
+            width: 100%;
+        }
+
+        .wrapper h2 {
+            padding: 20px 0 20px 20px;
+        }
+
+        .wrapper p {
+            padding: 0px 0 20px 20px;
+        }
+
+        .noData {
+            font-family: Garamond;
+            font-size: 18px;
+            font-style: italic;
+            font-weight:bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h2>CALCULATION OF NUTRITIENT</h2>
+        <p>
+            Nutritient:
+            <input id="txtNutritient" placeholder="Enter name of nutritient" style="width: 200px" />
+            <button type="submit" onclick="return getNutrition()">Go...</button>
+            <label id="lblNoResult" class="noData" style="display:none;">There is no result for search criteria...</label>
+        </p>
+    </div>
+    <div>
+        <fieldset>
+            <table class="tableHide" id="tblNutritionResults">
+                <thead>
+                    <tr>
+                        <th>Name of nutrition</th>
+                        <th>Sugar in grams</th>
+                        <th>Fiber in grams</th>
+                        <th>Serving size in grams</th>
+                        <th>Cholesterol in miligrams</th>
+                        <th>Protein in grams</th>
+                        <th>Calories</th>
+                        <th>Carbonhydrated in grams</th>
+                    </tr>
+                </thead>
+                <tbody id="tblBodyNutritions">
+                </tbody>
+                <!--<tr>
+                    <td id="NameOfNutrition"></td>
+                    <td id="Sugar"></td>
+                    <td id="Fiber"></td>
+                    <td id="ServingSize"></td>
+                    <td id="Cholesterol"></td>
+                    <td id="Protein"></td>
+                    <td id="Calories"></td>
+                    <td id="Carbon"></td>
+                </tr>-->
+            </table>
+        </fieldset>
+    </div>
+    <!--<img class="img-banner" src="img/a.png" alt="mmtuts a" />
+    <div class="wrapper">
+        <article class="img-info">
+            <h2>Yayyy!</h2>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce feugiat velit ut tincidunt aliquet. Cras lacus quam, laoreet sit amet mollis ac, malesuada et magna. Sed iaculis turpis dui,
+                eget sagittis nisi malesuada eget. Suspendisse vehicula tempor diam vitae tincidunt. Morbi sed tristique erat. Donec sit amet hendrerit ligula, eget sodales mauris. Cras rhoncus ultricies dolor.
+            </p>
+            <p>
+                Nam nibh tortor, suscipit sed rhoncus vel, varius nec nunc. Duis fringilla mauris sit amet ullamcorper rutrum. Curabitur tincidunt nisl et placerat vehicula. Morbi quam velit, feugiat quis sem a,
+                tempor egestas ante. Suspendisse nec mattis risus. Donec ullamcorper elementum risus sit amet consectetur. Phasellus hendrerit elementum arcu eu lacinia. Nulla eget dolor leo. In est lectus,
+                pharetra ac nunc quis, porttitor volutpat est.
+            </p>
+        </article>
+        <img class="img-me" src="img/z.png" alt="Stevan Stevanovic" />
+    </div>-->
+    <script type="text/javascript" language="javascript">
+        const apiID = 'rk0p8JL/W+olO3FQA2K8OA==NuAjsLyNLE76yej1';
+
+        function getNutrition() {
+            var query = document.getElementById('txtNutritient').value;
+            $.ajax({
+                method: 'GET',
+                url: 'https://cors-anywhere.herokuapp.com/https://api.calorieninjas.com/v1/nutrition?query=' + query,
+                headers: { 'X-Api-Key': apiID },
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.items.length > 0) {
+                        document.getElementById('tblNutritionResults').className = "tableVisible";
+                        document.getElementById('lblNoResult').style.display = 'none';
+                        PopulateTable(data);
+                    }
+                    else {
+                        document.getElementById('tblNutritionResults').className = "tableHide";
+                        document.getElementById('lblNoResult').style.display = '';
+                    }
+                },
+                error: function error(jqXHR) {
+                    console.error('Error: ', jqXHR.responseText);
+                }
+            });
+        }
+
+        function PopulateTable(data) {
+            var rowNo = document.getElementById("tblBodyNutritions").rows.length;
+            if (rowNo > 0) $("#tblNutritionResults tbody").empty();
+
+            var tableBody = "";
+            for (i = 0; i < data.items.length; i++) {
+                tableBody = "<tr>";
+                tableBody = tableBody + "<td id='NameOfNutrition" + i + "'>" + data.items[i]['name'].toUpperCase() + "</td>"  
+                tableBody = tableBody + "<td id='Sugar" + i + "'>" + data.items[i]['sugar_g'] + "</td>"  
+                tableBody = tableBody + "<td id='Fiber" + i + "'>" + data.items[i]['fiber_g'] + "</td>"  
+                tableBody = tableBody + "<td id='ServingSize" + i + "'>" + data.items[i]['serving_size_g'] + "</td>"  
+                tableBody = tableBody + "<td id='Cholesterol" + i + "'>" + data.items[i]['cholesterol_mg'] + "</td>"  
+                tableBody = tableBody + "<td id='Protein" + i + "'>" + data.items[i]['protein_g'] + "</td>"  
+                tableBody = tableBody + "<td id='Calories" + i + "'>" + data.items[i]['calories'] + "</td>"  
+                tableBody = tableBody + "<td id='NameOfNutrition" + i + "'>" + data.items[i]['carbohydrates_total_g'] + "</td>"
+                //document.getElementById('Carbon').innerHTML = data.items[i]['name'];
+                //document.getElementById('Sugar').innerHTML = data.items[i]['sugar_g'];
+                //document.getElementById('Fiber').innerHTML = data.items[i]['fiber_g'];
+                //document.getElementById('ServingSize').innerHTML = data.items[i]['serving_size_g'];
+                //document.getElementById('Cholesterol').innerHTML = data.items[i]['cholesterol_mg'];
+                //document.getElementById('Protein').innerHTML = data.items[i]['protein_g'];
+                //document.getElementById('Calories').innerHTML = data.items[i]['calories'];
+                //document.getElementById('Carbon').innerHTML = data.items[i]['carbohydrates_total_g'];
+                tableBody = tableBody + "</tr>";
+                $("#tblBodyNutritions").append(tableBody);
+            }
+        }
+
+    </script>
+</body>
+</html>
